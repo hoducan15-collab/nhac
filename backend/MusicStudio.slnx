@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MusicStudio.API/MusicStudio.API.csproj" />
+    <Project Path="src/MusicStudio.Application/MusicStudio.Application.csproj" />
+    <Project Path="src/MusicStudio.Domain/MusicStudio.Domain.csproj" />
+    <Project Path="src/MusicStudio.Infrastructure/MusicStudio.Infrastructure.csproj" />
+    <Project Path="src/MusicStudio.Tests/MusicStudio.Tests.csproj" />
+    <Project Path="src/MusicStudio.Worker/MusicStudio.Worker.csproj" />
+  </Folder>
+</Solution>
