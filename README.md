@@ -15,7 +15,7 @@ Nền tảng web hiện đại hỗ trợ sáng tác, hòa âm và sản xuất 
 ### Backend
 - **Core**: C# và **ASP.NET Core Web API** (.NET 10).
 - **Kiến trúc**: **Clean Architecture** (API, Application, Domain, Infrastructure, Worker, Tests).
-- **Database**: **Entity Framework Core** hỗ trợ SQL Server (Production/Docker) và SQLite tự động (Local Dev).
+- **Database**: **Entity Framework Core** với **PostgreSQL 16** (`Npgsql.EntityFrameworkCore.PostgreSQL`) và SQLite tự động dự phòng.
 - **Validation**: FluentValidation.
 - **Bảo mật**: JWT Access Token & Refresh Token rotation có cơ chế thu hồi, Hash SHA-256 có Salt.
 - **Provider Abstraction**: `IMusicGenerationProvider` tách biệt logic nghiệp vụ khỏi AI Provider (sẵn sàng tích hợp Suno / Udio / AudioCraft / MusicGen).
@@ -27,7 +27,7 @@ Nền tảng web hiện đại hỗ trợ sáng tác, hòa âm và sản xuất 
 
 ```text
 nhac/
-├── frontend/                          # Next.js 16 App Router
+├── frontend/                          # Next.js 16 App Router (Port 3000)
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── (public)/              # Landing page, Bảng giá
@@ -38,38 +38,37 @@ nhac/
 │   │   ├── stores/                    # Zustand stores (player, auth)
 │   │   ├── lib/                       # API Client, utils, validations
 │   │   └── types/                     # TypeScript DTOs & Interfaces
-│   └── package.json
+│   └── Dockerfile
 │
-├── backend/                           # .NET 10 Clean Architecture
+├── backend/                           # .NET 10 Clean Architecture (Port 5050 -> 5000)
+│   ├── Dockerfile
 │   ├── MusicStudio.slnx               # Solution file
 │   └── src/
 │       ├── MusicStudio.Domain/        # Entities, Enums, Value Objects
 │       ├── MusicStudio.Application/   # DTOs, Interfaces, Validators
-│       ├── MusicStudio.Infrastructure/# EF Core, Services, Storage, AI Providers
+│       ├── MusicStudio.Infrastructure/# EF Core (PostgreSQL), Services, Storage, AI Providers
 │       ├── MusicStudio.API/           # Controllers, Swagger, Auth, Program.cs
 │       ├── MusicStudio.Worker/        # Background queue worker
 │       └── MusicStudio.Tests/         # xUnit Unit tests
 │
-├── docker-compose.yml                 # SQL Server 2022 & Redis
+├── docker-compose.yml                 # PostgreSQL 16 + Backend API + Frontend Next.js
 ├── .env.example
 └── README.md
 ```
 
 ---
 
-## 3. HƯỚNG DẪN KHỞI CHẠY (LOCAL SETUP)
+## 3. HƯỚNG DẪN KHỞI CHẠY (DOCKER COMPOSE)
 
-### Yêu cầu môi trường
-- **Node.js**: v20+ và **npm**
-- **.NET SDK**: v10.0+ (hoặc v9.0)
-- **Docker** (Tùy chọn, nếu muốn dùng SQL Server 2022 qua container)
+Chỉ cần một lệnh duy nhất để build và khởi chạy toàn bộ hệ thống gồm PostgreSQL, Backend .NET 10 và Frontend Next.js:
 
-### Bước 1: Khởi chạy Hạ tầng Database (Tùy chọn)
-Nếu muốn sử dụng SQL Server container:
 ```bash
 docker compose up -d
 ```
-*Lưu ý: Mặc định backend đã được cấu hình tự động tạo SQLite database `musicstudio.db` và seed dữ liệu mẫu đầy đủ nếu không bật SQL Server.*
+
+- **Frontend Web App**: `http://localhost:3000`
+- **Backend Web API**: `http://localhost:5050`
+- **PostgreSQL Database**: `localhost:5432` (`musicstudiodb` / user `postgres` / pass `postgres`)
 
 ### Bước 2: Chạy Backend ASP.NET Core API
 ```bash
