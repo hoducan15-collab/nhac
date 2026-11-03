@@ -33,10 +33,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/publish .
-COPY --from=build /src/src/MusicStudio.API/Storage/ /app/Storage/
 COPY --from=build /src/src/MusicStudio.API/vietnamese_singing_engine.py /app/vietnamese_singing_engine.py
 COPY --from=build /src/src/MusicStudio.API/voice_conversion_engine.py /app/voice_conversion_engine.py
 COPY --from=build /src/src/MusicStudio.API/vocal_separation_engine.py /app/vocal_separation_engine.py
+RUN mkdir -p /app/Storage/Audio
 
 ENV ASPNETCORE_ENVIRONMENT=Development
 EXPOSE 5000
