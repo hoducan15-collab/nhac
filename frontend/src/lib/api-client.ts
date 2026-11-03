@@ -42,11 +42,19 @@ export async function apiClient<T>(
     "Content-Type": "application/json",
   };
 
-  // Add auth token if exists in localStorage (browser environment)
+  // Add auth token and user headers if exists in localStorage (browser environment)
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("accessToken");
     if (token) {
       (defaultHeaders as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+    }
+    const userStr = localStorage.getItem("userData");
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        if (u.email) (defaultHeaders as Record<string, string>)["X-User-Email"] = u.email;
+        if (u.id) (defaultHeaders as Record<string, string>)["X-User-Id"] = u.id;
+      } catch {}
     }
   }
 

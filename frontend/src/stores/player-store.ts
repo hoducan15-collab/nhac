@@ -9,6 +9,9 @@ export interface AudioTrack {
   style?: string;
   coverUrl?: string;
   projectId?: string;
+  lyrics?: string;
+  hasVocals?: boolean;
+  isInstrumental?: boolean;
 }
 
 interface PlayerState {
@@ -18,6 +21,14 @@ interface PlayerState {
   duration: number;
   volume: number;
   isMuted: boolean;
+
+  // Vocal AI Synthesis state
+  vocalEnabled: boolean;
+  vocalVolume: number;
+  vocalGender: "female" | "male";
+  currentLyricIndex: number;
+  showLyricsModal: boolean;
+
   playTrack: (track: AudioTrack) => void;
   pause: () => void;
   resume: () => void;
@@ -27,6 +38,12 @@ interface PlayerState {
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   closePlayer: () => void;
+
+  toggleVocal: () => void;
+  setVocalVolume: (vol: number) => void;
+  setVocalGender: (gender: "female" | "male") => void;
+  setCurrentLyricIndex: (index: number) => void;
+  setShowLyricsModal: (show: boolean) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set, get) => ({
@@ -36,6 +53,12 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   duration: 0,
   volume: 0.8,
   isMuted: false,
+
+  vocalEnabled: true,
+  vocalVolume: 0.9,
+  vocalGender: "female",
+  currentLyricIndex: -1,
+  showLyricsModal: false,
 
   playTrack: (track) => {
     const current = get().currentTrack;
@@ -47,6 +70,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
         isPlaying: true,
         currentTime: 0,
         duration: track.duration || 0,
+        currentLyricIndex: -1,
       });
     }
   },
@@ -58,5 +82,18 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   setDuration: (duration) => set({ duration }),
   setVolume: (volume) => set({ volume, isMuted: volume === 0 }),
   toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
-  closePlayer: () => set({ currentTrack: null, isPlaying: false, currentTime: 0 }),
+  closePlayer: () =>
+    set({
+      currentTrack: null,
+      isPlaying: false,
+      currentTime: 0,
+      currentLyricIndex: -1,
+      showLyricsModal: false,
+    }),
+
+  toggleVocal: () => set((state) => ({ vocalEnabled: !state.vocalEnabled })),
+  setVocalVolume: (vocalVolume) => set({ vocalVolume }),
+  setVocalGender: (vocalGender) => set({ vocalGender }),
+  setCurrentLyricIndex: (currentLyricIndex) => set({ currentLyricIndex }),
+  setShowLyricsModal: (showLyricsModal) => set({ showLyricsModal }),
 }));

@@ -26,11 +26,15 @@ public static class DependencyInjection
             }
         });
 
+        services.AddHttpContextAccessor();
+        services.AddHttpClient("SunoClient");
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IMediaStorageService, LocalMediaStorageService>();
-        services.AddScoped<IMusicGenerationProvider, MockMusicGenerationProvider>();
+        services.AddScoped<IMusicGenerationProvider, SunoMusicGenerationProvider>();
+        services.AddHttpClient("OpenAIClient");
+        services.AddScoped<ISongCompositionService, OpenAiSongCompositionService>();
 
         return services;
     }

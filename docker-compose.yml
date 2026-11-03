@@ -27,8 +27,16 @@ services:
       - ASPNETCORE_URLS=http://+:5000
       - ConnectionStrings__PostgreSqlConnection=Host=postgres;Port=5432;Database=musicstudiodb;Username=postgres;Password=postgres
       - Jwt__Secret=MusicStudioSuperSecretKey2026SecureLongPhraseJwt1234567890!
+      - OpenAI__ApiKey=${OPENAI_API_KEY:-}
+      - OpenAI__Endpoint=${OPENAI_ENDPOINT:-https://api.groq.com/openai/v1}
+      - OpenAI__Model=${OPENAI_MODEL:-qwen/qwen3.8-27b}
+      - MusicProvider__ApiKey=${SUNO_API_KEY:-}
+      - MusicProvider__HfToken=${HF_TOKEN:-}
+      - HF_TOKEN=${HF_TOKEN:-}
     ports:
       - "5050:5000"
+    volumes:
+      - ./backend/src/MusicStudio.API/Storage:/app/Storage
     depends_on:
       postgres:
         condition: service_healthy
@@ -38,6 +46,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:5050/api/v1
     container_name: musicstudio_frontend
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:5050/api/v1

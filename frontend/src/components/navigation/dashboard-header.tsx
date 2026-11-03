@@ -1,11 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, Menu, Bell, Coins, Plus } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 
 export function DashboardHeader({ onOpenMobileMenu }: { onOpenMobileMenu: () => void }) {
   const { user } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-800 bg-[#080c14]/80 backdrop-blur-md px-4 sm:px-6">
@@ -25,7 +31,7 @@ export function DashboardHeader({ onOpenMobileMenu }: { onOpenMobileMenu: () => 
           className="hidden sm:flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-950/40 px-3 py-1 text-xs font-semibold text-purple-300 hover:bg-purple-900/40 transition"
         >
           <Coins className="h-3.5 w-3.5 text-purple-400" />
-          <span>{user?.creditsBalance ?? 0} Credits</span>
+          <span>{(mounted ? user?.creditsBalance : 0) ?? 0} Credits</span>
         </Link>
 
         <Link

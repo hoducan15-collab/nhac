@@ -81,10 +81,12 @@ using (var scope = app.Services.CreateScope())
         var sampleVersion = new MusicVersion
         {
             ProjectId = sampleProject.Id,
-            Title = "Khúc Hát Ban Mai",
+            Title = "Khúc Hát Ban Mai (Vocal Master)",
             VersionName = "v1.0 (Master Mix)",
-            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            DurationSeconds = 174
+            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+            DurationSeconds = 180,
+            Lyrics = "[Verse 1]\nÁnh ban mai rạng ngời khắp phố đông\n[Chorus]\nKhúc hát ru êm đềm những ước mong...",
+            HasVocals = true
         };
         context.MusicVersions.Add(sampleVersion);
 

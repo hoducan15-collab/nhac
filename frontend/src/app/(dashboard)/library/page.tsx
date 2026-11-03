@@ -22,6 +22,8 @@ interface Song {
   audioUrl: string;
   createdAt: string;
   isFavorite: boolean;
+  lyrics?: string;
+  hasVocals?: boolean;
 }
 
 export default function LibraryPage() {
@@ -32,12 +34,15 @@ export default function LibraryPage() {
   const [songs, setSongs] = useState<Song[]>([
     {
       id: "lib-1",
-      title: "Hương Đêm Mùa Thu (Acoustic)",
+      title: "Hương Đêm Mùa Thu (Vocal Ballad)",
       genre: "Acoustic / Ballad",
       duration: 174,
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
       createdAt: "21/10/2026",
       isFavorite: true,
+      hasVocals: true,
+      lyrics:
+        "[Verse 1]\nHương hoa sữa nồng nàn góc phố quen\nBước chân người nhẹ nhàng qua ánh đèn\n[Chorus]\nNhớ thương ai trong đêm dài lặng lẽ\nGửi tình yêu theo ngọn gió mơn man...",
     },
     {
       id: "lib-2",
@@ -47,15 +52,19 @@ export default function LibraryPage() {
       audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
       createdAt: "20/10/2026",
       isFavorite: false,
+      hasVocals: false,
     },
     {
       id: "lib-3",
-      title: "Mưa Đêm Ban Mê (Lo-Fi)",
+      title: "Mưa Đêm Ban Mê (Lo-Fi Vocal)",
       genre: "Lo-Fi Hip Hop",
       duration: 185,
       audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
       createdAt: "18/10/2026",
       isFavorite: true,
+      hasVocals: true,
+      lyrics:
+        "[Verse 1]\nTiếng mưa rơi trên mái tôn lạnh giá\nTách trà ấm giữa đêm lạnh ngút ngàn\n[Chorus]\nBình yên tìm về trong từng giai điệu\nGiữ lấy phút giây nhẹ bước thênh thang...",
     },
     {
       id: "lib-4",
@@ -138,6 +147,9 @@ export default function LibraryPage() {
                         audioUrl: song.audioUrl,
                         duration: song.duration,
                         style: song.genre,
+                        lyrics: song.lyrics,
+                        hasVocals: song.hasVocals,
+                        isInstrumental: !song.hasVocals,
                       })
                     }
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
@@ -154,7 +166,14 @@ export default function LibraryPage() {
                   </button>
 
                   <div className="min-w-0">
-                    <h4 className="font-semibold text-white text-sm truncate">{song.title}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-white text-sm truncate">{song.title}</h4>
+                      {song.hasVocals && (
+                        <span className="rounded bg-indigo-500/20 px-1.5 py-0.5 text-[10px] font-medium text-indigo-300 border border-indigo-500/30">
+                          Vocal
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-400">
                       <span>{song.genre}</span>
                       <span>•</span>

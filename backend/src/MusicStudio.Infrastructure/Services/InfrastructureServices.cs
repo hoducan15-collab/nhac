@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MusicStudio.Application.DTOs;
 using MusicStudio.Application.Interfaces;
 using MusicStudio.Domain.Enums;
 
@@ -123,17 +124,23 @@ public class MockMusicGenerationProvider : IMusicGenerationProvider
     public string ProviderName => "MockMusicGenerationEngine";
     public bool SupportsLyrics => true;
     public bool SupportsStems => false;
+    public bool IsConfigured => false;
 
     public Task<MusicGenerationResponse> SubmitGenerationAsync(MusicGenerationRequest request, CancellationToken cancellationToken = default)
     {
         var mockJobId = "mock-prov-" + Guid.NewGuid().ToString("N")[..8];
 
-        // Sample publicly available test audio track url
+        // Differentiate vocal vs instrumental tracks with real singing audio
+        var hasLyrics = !string.IsNullOrWhiteSpace(request.Lyrics) || request.Mode == GenerationMode.Vocal;
+        var audioUrl = request.Genre?.Contains("Ballad") == true
+            ? "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            : "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+
         return Task.FromResult(new MusicGenerationResponse
         {
             ProviderJobId = mockJobId,
             Status = JobStatus.Succeeded,
-            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            AudioUrl = audioUrl,
             DurationSeconds = request.DurationSeconds,
             ErrorMessage = null
         });
@@ -145,9 +152,16 @@ public class MockMusicGenerationProvider : IMusicGenerationProvider
         {
             ProviderJobId = providerJobId,
             Status = JobStatus.Succeeded,
-            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            AudioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
             DurationSeconds = 120,
             ErrorMessage = null
         });
     }
+
+    public Task<MusicGenerationResponse> RegenerateSegmentAsync(Guid jobId, string providerJobId, RegenerateSegmentRequestDto segmentRequest, CancellationToken cancellationToken = default)
+    {
+        return CheckStatusAsync(providerJobId, cancellationToken);
+    }
+
+    public LyricsVerificationReportDto? GetCachedVerificationReport(Guid jobId) => null;
 }

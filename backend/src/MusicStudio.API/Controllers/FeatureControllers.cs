@@ -36,7 +36,9 @@ public class LibraryController : ControllerBase
                 v.AudioUrl,
                 v.DurationSeconds,
                 v.Favorites.Any(),
-                v.CreatedAtUtc
+                v.CreatedAtUtc,
+                v.Lyrics,
+                v.HasVocals
             ))
             .ToListAsync();
 
@@ -94,8 +96,16 @@ public class CreditsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetBalance()
     {
-        var user = await _context.Users.FirstOrDefaultAsync();
-        return Ok(new { creditsBalance = user?.CreditsBalance ?? 50 });
+        // 1. Try headers
+        if (Request.Headers.TryGetValue("X-User-Email", out var hEmail) && !string.IsNullOrWhiteSpace(hEmail))
+        {
+            var userByEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == hEmail.ToString().ToLower());
+            if (userByEmail != null) return Ok(new { creditsBalance = userByEmail.CreditsBalance });
+        }
+
+        // 2. Try top user
+        var user = await _context.Users.OrderByDescending(u => u.CreditsBalance).FirstOrDefaultAsync();
+        return Ok(new { creditsBalance = user?.CreditsBalance ?? 500 });
     }
 
     [HttpGet("ledger")]

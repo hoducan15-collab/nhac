@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -14,12 +15,14 @@ import {
   ShieldAlert,
   LogOut,
   User as UserIcon,
+  Mic2,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 
 const NAV_ITEMS = [
   { name: "Tổng quan", href: "/dashboard", icon: LayoutDashboard },
   { name: "AI Studio", href: "/studio", icon: Sparkles, highlight: true },
+  { name: "Voice Cloning & SVC", href: "/voices", icon: Mic2, highlight: true },
   { name: "Dự án âm nhạc", href: "/projects", icon: FolderKanban },
   { name: "Thư viện bài hát", href: "/library", icon: Library },
   { name: "Playlists", href: "/playlists", icon: ListMusic },
@@ -30,7 +33,13 @@ const NAV_ITEMS = [
 export function DashboardSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
-  const isAdmin = user?.roles?.includes("Admin");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isAdmin = mounted && user?.roles?.includes("Admin");
 
   return (
     <aside className="flex h-full w-64 flex-col justify-between border-r border-slate-800 bg-[#070b13] p-4 text-slate-300">
@@ -60,7 +69,7 @@ export function DashboardSidebar({ onClose }: { onClose?: () => void }) {
           </div>
           <div className="mt-1 flex items-baseline gap-1">
             <span className="text-xl font-extrabold text-white">
-              {user?.creditsBalance ?? 0}
+              {mounted ? (user?.creditsBalance ?? 0) : 0}
             </span>
             <span className="text-[11px] text-purple-300">credits</span>
           </div>
@@ -124,9 +133,11 @@ export function DashboardSidebar({ onClose }: { onClose?: () => void }) {
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold text-white">
-              {user?.fullName || "Nhà sáng tạo"}
+              {mounted ? (user?.fullName || "Nhà sáng tạo") : "Nhà sáng tạo"}
             </p>
-            <p className="truncate text-[10px] text-slate-500">{user?.email || "Chưa đăng nhập"}</p>
+            <p className="truncate text-[10px] text-slate-500">
+              {mounted ? (user?.email || "Chưa đăng nhập") : "Đang đồng bộ..."}
+            </p>
           </div>
           <button
             onClick={() => logout()}

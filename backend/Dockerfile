@@ -23,7 +23,20 @@ RUN dotnet publish src/MusicStudio.API/MusicStudio.API.csproj -c Release -o /app
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3 python3-pip python3-dev g++ python3-numpy python3-scipy ffmpeg flac rubberband-cli \
+    && pip3 install --no-cache-dir --break-system-packages "setuptools>=68,<81" \
+    && pip3 install --no-cache-dir --break-system-packages pyworld edge-tts SpeechRecognition \
+    && pip3 install --no-cache-dir --break-system-packages torch torchaudio --index-url https://download.pytorch.org/whl/cpu \
+    && pip3 install --no-cache-dir --break-system-packages "setuptools>=68,<81" \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish .
+COPY --from=build /src/src/MusicStudio.API/Storage/ /app/Storage/
+COPY --from=build /src/src/MusicStudio.API/vietnamese_singing_engine.py /app/vietnamese_singing_engine.py
+COPY --from=build /src/src/MusicStudio.API/voice_conversion_engine.py /app/voice_conversion_engine.py
+COPY --from=build /src/src/MusicStudio.API/vocal_separation_engine.py /app/vocal_separation_engine.py
 
 ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Development

@@ -62,6 +62,8 @@ public class GenerationJob : BaseEntity
 
     public int CreditCost { get; set; } = 5;
     public JobStatus Status { get; set; } = JobStatus.Queued;
+    public string? PipelineStage { get; set; } = "PENDING";
+    public string? VoiceModelId { get; set; }
     public string ProviderName { get; set; } = "MockAudioCraftProvider";
     public string? ProviderJobId { get; set; }
     public string? ErrorMessage { get; set; }
@@ -85,6 +87,9 @@ public class MusicVersion : BaseEntity
     public string AudioUrl { get; set; } = string.Empty;
     public int DurationSeconds { get; set; }
     public string? WaveformData { get; set; }
+    public string? Lyrics { get; set; }
+    public bool HasVocals { get; set; }
+    public string? VoiceModelId { get; set; }
 
     public ICollection<MediaAsset> MediaAssets { get; set; } = new List<MediaAsset>();
     public ICollection<PlaylistItem> PlaylistItems { get; set; } = new List<PlaylistItem>();

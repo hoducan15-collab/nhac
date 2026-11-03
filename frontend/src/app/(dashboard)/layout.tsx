@@ -19,7 +19,7 @@ export default function DashboardLayout({
   }, [initialize]);
 
   return (
-    <div className="flex min-h-screen bg-[#080c14] text-slate-100">
+    <div className="flex min-h-screen bg-[#080c14] text-slate-100" suppressHydrationWarning>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40">
         <Suspense fallback={<div className="w-64 bg-[#070b13]" />}>

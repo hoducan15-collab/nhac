@@ -23,8 +23,64 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="dark">
-      <body className="min-h-screen bg-[#080c14] text-slate-100 antialiased selection:bg-purple-600 selection:text-white">
+    <html lang="vi" className="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                window.addEventListener('error', function(e) {
+                  if ((e.filename && e.filename.indexOf('chrome-extension://') !== -1) || 
+                      (e.message && (e.message.indexOf('M_ID') !== -1 || e.message.indexOf('chrome-extension') !== -1))) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    return true;
+                  }
+                }, true);
+
+                window.addEventListener('unhandledrejection', function(e) {
+                  var reason = (e.reason && (e.reason.stack || e.reason.message || String(e.reason))) || '';
+                  if (reason.indexOf('chrome-extension://') !== -1 || reason.indexOf('M_ID') !== -1) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                  }
+                }, true);
+
+                // Auto-dismiss any Next.js error overlay caused by external Chrome extensions
+                setInterval(function() {
+                  try {
+                    const portal = document.querySelector('nextjs-portal');
+                    if (portal) {
+                      const root = portal.shadowRoot || portal;
+                      const text = root.textContent || '';
+                      if (text.indexOf('M_ID') !== -1 || text.indexOf('chrome-extension://') !== -1) {
+                        portal.remove();
+                      }
+                    }
+                  } catch (e) {}
+                }, 400);
+
+                const observer = new MutationObserver(function(mutations) {
+                  for (let i = 0; i < mutations.length; i++) {
+                    const m = mutations[i];
+                    if (m.type === 'attributes' && m.attributeName) {
+                      const name = m.attributeName;
+                      if (name.indexOf('bis_') === 0 || name.indexOf('__processed_') === 0) {
+                        m.target.removeAttribute(name);
+                      }
+                    }
+                  }
+                });
+                observer.observe(document.documentElement, { attributes: true, subtree: true });
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body
+        className="min-h-screen bg-[#080c14] text-slate-100 antialiased selection:bg-purple-600 selection:text-white"
+        suppressHydrationWarning
+      >
         <QueryProvider>
           {children}
           <GlobalAudioPlayer />
