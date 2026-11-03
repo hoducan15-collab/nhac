@@ -46,14 +46,14 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
 # Install Node.js 20, Python 3 and Audio DSP dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     curl gnupg python3 python3-pip python3-dev g++ python3-numpy python3-scipy ffmpeg flac rubberband-cli \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
-    && pip3 install --no-cache-dir --break-system-packages "setuptools>=68,<81" \
+    && apt-get install -y -qq --no-install-recommends nodejs \
+    && pip3 install --no-cache-dir --break-system-packages "setuptools>=68,<81" wheel \
     && pip3 install --no-cache-dir --break-system-packages pyworld edge-tts SpeechRecognition \
     && pip3 install --no-cache-dir --break-system-packages torch torchaudio --index-url https://download.pytorch.org/whl/cpu \
-    && pip3 install --no-cache-dir --break-system-packages "setuptools>=68,<81" \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy backend binaries and storage
