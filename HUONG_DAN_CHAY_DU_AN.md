@@ -12,6 +12,7 @@ Tài liệu hướng dẫn chi tiết cách khởi chạy toàn bộ nền tản
 5. [Thông tin Đăng nhập & Tài khoản Demo](#5-thông-tin-đăng-nhập--tài-khoản-demo)
 6. [Các Cổng Dịch Vụ & Endpoints](#6-các-cổng-dịch-vụ--endpoints)
 7. [Xử lý lỗi thường gặp (Troubleshooting)](#7-xử-lý-lỗi-thường-gặp-troubleshooting)
+8. [Hướng dẫn Deploy lên Railway Cloud](#8-hướng-dẫn-deploy-lên-railway-cloud)
 
 ---
 
@@ -216,4 +217,23 @@ docker compose down -v
 docker compose up -d
 ```
 Lệnh `-v` sẽ xóa sạch volume database cũ và khởi tạo lại database với dữ liệu seed mẫu.
+
+---
+
+## 8. Hướng dẫn Deploy lên Railway Cloud
+
+Nếu bạn triển khai website lên dịch vụ đám mây [Railway.app](https://railway.app):
+
+### Lỗi thường gặp: `Railpack failed to prepare the build`
+- **Nguyên nhân**: Railway mặc định dùng Railpack để tự đoán ngôn ngữ ở thư mục gốc (`/`). Do dự án chứa cả Backend (.NET) và Frontend (Next.js), Railpack không tự đoán được.
+- **Cách khắc phục nhanh nhất (30 giây trên Railway):**
+  1. Trong trang dự án Railway, bấm vào tab **Settings** của Service.
+  2. Cuộn xuống mục **Build**:
+     - **Root Directory**:
+       - Điền `/backend` (nếu service chạy Backend).
+       - Hoặc điền `/frontend` (nếu service chạy Frontend).
+       - Hoặc để trống `/` nếu muốn chạy Fullstack (dự án đã có sẵn `Dockerfile` và `railway.toml` ở thư mục gốc).
+     - **Builder**: Bấm menu chọn **`Dockerfile`**.
+  3. Bấm **Redeploy** để Railway tiến hành build bằng Docker.
+
 
