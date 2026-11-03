@@ -38,8 +38,7 @@ COPY --from=build /src/src/MusicStudio.API/vietnamese_singing_engine.py /app/vie
 COPY --from=build /src/src/MusicStudio.API/voice_conversion_engine.py /app/voice_conversion_engine.py
 COPY --from=build /src/src/MusicStudio.API/vocal_separation_engine.py /app/vocal_separation_engine.py
 
-ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Development
 EXPOSE 5000
 
-ENTRYPOINT ["dotnet", "MusicStudio.API.dll"]
+ENTRYPOINT ["sh", "-c", "export ASPNETCORE_URLS=http://+:${PORT:-5000} && dotnet MusicStudio.API.dll"]
