@@ -18,7 +18,8 @@ yarn-error.log*
 *.db-wal
 
 # Storage & media
-**/Storage/
+**/Storage/Audio/*
+!**/Storage/Audio/.gitkeep
 **/publish/
 
 # Environment files
