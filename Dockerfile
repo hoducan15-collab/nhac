@@ -56,11 +56,11 @@ RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
     && pip3 install --no-cache-dir --break-system-packages torch torchaudio --index-url https://download.pytorch.org/whl/cpu \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy backend binaries and prepare storage directory
+# Copy backend binaries and engine scripts
 COPY --from=backend-builder /app/backend /app/backend
-COPY --from=backend-builder /src/src/MusicStudio.API/vietnamese_singing_engine.py /app/backend/vietnamese_singing_engine.py
-COPY --from=backend-builder /src/src/MusicStudio.API/voice_conversion_engine.py /app/backend/voice_conversion_engine.py
-COPY --from=backend-builder /src/src/MusicStudio.API/vocal_separation_engine.py /app/backend/vocal_separation_engine.py
+COPY backend/src/MusicStudio.API/vietnamese_singing_engine.py /app/backend/vietnamese_singing_engine.py
+COPY backend/src/MusicStudio.API/voice_conversion_engine.py /app/backend/voice_conversion_engine.py
+COPY backend/src/MusicStudio.API/vocal_separation_engine.py /app/backend/vocal_separation_engine.py
 RUN mkdir -p /app/backend/Storage/Audio
 
 # Copy frontend standalone build
