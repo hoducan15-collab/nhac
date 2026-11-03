@@ -89,3 +89,4 @@ EXPOSE 3000 5000
 
 ENV PORT=3000
 ENTRYPOINT ["/app/start.sh"]
+
