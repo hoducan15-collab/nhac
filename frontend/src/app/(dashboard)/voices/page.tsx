@@ -20,7 +20,7 @@ import {
   Sliders,
   Music,
 } from "lucide-react";
-import { apiClient } from "@/lib/api-client";
+import { apiClient, API_BASE_URL } from "@/lib/api-client";
 import { usePlayerStore } from "@/stores/player-store";
 
 interface VoiceModel {
@@ -156,7 +156,7 @@ export default function VoiceStudioPage() {
       // 1. Upload audio
       const formData = new FormData();
       formData.append("file", trainingFile);
-      const upRes = await fetch("http://localhost:5050/api/v1/voices/upload", {
+      const upRes = await fetch(`${API_BASE_URL}/voices/upload`, {
         method: "POST",
         body: formData,
       });
@@ -209,7 +209,7 @@ export default function VoiceStudioPage() {
 
       const formData = new FormData();
       formData.append("file", extractFile);
-      const upRes = await fetch("http://localhost:5050/api/v1/voices/upload", {
+      const upRes = await fetch(`${API_BASE_URL}/voices/upload`, {
         method: "POST",
         body: formData,
       });
@@ -290,7 +290,7 @@ export default function VoiceStudioPage() {
 
       const formData = new FormData();
       formData.append("file", guideFile);
-      const upRes = await fetch("http://localhost:5050/api/v1/voices/upload", {
+      const upRes = await fetch(`${API_BASE_URL}/voices/upload`, {
         method: "POST",
         body: formData,
       });
