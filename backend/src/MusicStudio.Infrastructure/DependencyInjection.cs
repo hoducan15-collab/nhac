@@ -11,7 +11,37 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var pgConnection = configuration.GetConnectionString("PostgreSqlConnection");
+        var rawPg = Environment.GetEnvironmentVariable("DATABASE_URL")
+                    ?? Environment.GetEnvironmentVariable("POSTGRES_URL")
+                    ?? configuration.GetConnectionString("PostgreSqlConnection");
+
+        string? pgConnection = null;
+        if (!string.IsNullOrWhiteSpace(rawPg) && !rawPg.Contains("localhost:5432"))
+        {
+            if (rawPg.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+                rawPg.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    var uri = new Uri(rawPg);
+                    var userInfo = uri.UserInfo.Split(':');
+                    var user = userInfo.Length > 0 ? userInfo[0] : "postgres";
+                    var pass = userInfo.Length > 1 ? userInfo[1] : "";
+                    var db = uri.AbsolutePath.TrimStart('/');
+                    var port = uri.Port > 0 ? uri.Port : 5432;
+                    pgConnection = $"Host={uri.Host};Port={port};Database={db};Username={user};Password={pass};SSL Mode=Prefer;Trust Server Certificate=true";
+                }
+                catch
+                {
+                    pgConnection = rawPg;
+                }
+            }
+            else
+            {
+                pgConnection = rawPg;
+            }
+        }
+
         var sqliteConnection = configuration.GetConnectionString("DefaultConnection") ?? "Data Source=musicstudio.db";
 
         services.AddDbContext<ApplicationDbContext>(options =>

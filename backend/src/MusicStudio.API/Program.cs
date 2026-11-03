@@ -33,11 +33,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// Ensure Database is Created & Seeded in Development
+// Ensure Database is Created & Seeded safely
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await context.Database.EnsureCreatedAsync();
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await context.Database.EnsureCreatedAsync();
 
     // Seed Demo Users if empty
     if (!await context.Users.AnyAsync())
@@ -98,6 +100,10 @@ using (var scope = app.Services.CreateScope())
         );
 
         await context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogWarning(ex, "Database auto-migration warning: {Message}", ex.Message);
     }
 }
 

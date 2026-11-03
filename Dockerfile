@@ -68,22 +68,9 @@ COPY --from=frontend-builder /app/public /app/frontend/public
 COPY --from=frontend-builder /app/.next/standalone /app/frontend/
 COPY --from=frontend-builder /app/.next/static /app/frontend/.next/static
 
-# Create start script that boots Backend on 127.0.0.1:5000 and Frontend on $PORT
-RUN echo '#!/bin/sh\n\
-export ASPNETCORE_URLS="http://127.0.0.1:5000"\n\
-export ASPNETCORE_ENVIRONMENT="${ASPNETCORE_ENVIRONMENT:-Development}"\n\
-echo "[RUNTIME] Starting ASP.NET Core Backend on 127.0.0.1:5000..."\n\
-cd /app/backend && dotnet MusicStudio.API.dll &\n\
-BACKEND_PID=$!\n\
-\n\
-echo "[RUNTIME] Starting Next.js Frontend on port ${PORT:-3000}..."\n\
-cd /app/frontend\n\
-PORT="${PORT:-3000}" HOSTNAME="0.0.0.0" node server.js &\n\
-FRONTEND_PID=$!\n\
-\n\
-trap "kill -TERM $BACKEND_PID $FRONTEND_PID" INT TERM\n\
-wait $FRONTEND_PID $BACKEND_PID\n\
-' > /app/start.sh && chmod +x /app/start.sh
+# Copy startup script that boots Backend on 127.0.0.1:5000 and Frontend on $PORT
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 EXPOSE 3000 5000
 
