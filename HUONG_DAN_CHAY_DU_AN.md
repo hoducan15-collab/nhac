@@ -216,3 +216,4 @@ docker compose down -v
 docker compose up -d
 ```
 Lệnh `-v` sẽ xóa sạch volume database cũ và khởi tạo lại database với dữ liệu seed mẫu.
+
